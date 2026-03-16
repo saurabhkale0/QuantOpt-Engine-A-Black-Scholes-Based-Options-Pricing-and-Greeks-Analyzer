@@ -185,7 +185,3 @@ Run with multiple strikes to see Delta/Gamma changes across strikes.
 ## Disclaimer
 
 This is an educational tool. Not intended for actual trading. Use for learning quantitative finance concepts.
-
-## License
-
-MIT License

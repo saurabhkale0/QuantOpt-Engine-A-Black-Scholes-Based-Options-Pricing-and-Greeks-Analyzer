@@ -71,3 +71,33 @@ def black_scholes_gamma(S0, K, r, sigma, T):
     d1 = (np.log(S0 / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
     gamma = norm.pdf(d1) / (S0 * sigma * np.sqrt(T))
     return gamma
+
+# Black-Scholes Vega (sensitivity to volatility)
+def black_scholes_vega(S0, K, r, sigma, T):
+    """Vega: rate of change of option price w.r.t. volatility (per 1% change)"""
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+    vega = S0 * norm.pdf(d1) * np.sqrt(T) * 0.01  # scaled per 1% vol change
+    return vega
+
+# Black-Scholes Theta (time decay)
+def black_scholes_theta(S0, K, r, sigma, T, option_type='call'):
+    """Theta: rate of change of option price w.r.t. time (per day)"""
+    d1 = (np.log(S0 / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    if option_type == 'call':
+        theta = (-(S0 * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
+                 - r * K * np.exp(-r * T) * norm.cdf(d2))
+    else:
+        theta = (-(S0 * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
+                 + r * K * np.exp(-r * T) * norm.cdf(-d2))
+    return theta / 365  # per calendar day
+
+# Black-Scholes Rho (sensitivity to interest rate)
+def black_scholes_rho(S0, K, r, sigma, T, option_type='call'):
+    """Rho: rate of change of option price w.r.t. risk-free rate (per 1% change)"""
+    d2 = (np.log(S0 / K) + (r - 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+    if option_type == 'call':
+        rho = K * T * np.exp(-r * T) * norm.cdf(d2) * 0.01
+    else:
+        rho = -K * T * np.exp(-r * T) * norm.cdf(-d2) * 0.01
+    return rho
